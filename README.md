@@ -35,9 +35,24 @@ No         Question                                                    Right pag
  4         Who won the 2010 World Cup?                                         N/A                    Yes (said it was not in the document)              No 
  5         What is the price of a university hostel room?                      N/A                    Yes (said it was not in the document)              No 
 
-- What broke and how we fixed it: ____
+- What broke and how we fixed it: __1. Retrieving relevant information. The chatbot could fail to retrieve the exact section needed to answer a question. We used the PDF as the only knowledge source and improved the retrieval step so that the most relevant sections are given to the language model.
+2. Answering questions outside the PDF. The chatbot could answer questions that the document does not cover. We added a system prompt telling it to answer only from the information retrieved from the PDF and to admit when the answer cannot be found.
+  3. Avoiding incorrect or invented answers.We added instructions to the system prompt so the chatbot says it does not know when the document does not contain enough information, instead of making something up.
+4. Testing the chatbot.We tested it with questions answered in the PDF and with unrelated questions. This showed whether it retrieves correct information and avoids unsupported answers.
+
+Changes made to the system prompt:the prompt defines the chatbot as an assistant for the *Introduction to Food and Nutrition* document. It tells the chatbot to rely on the provided document context, avoid outside knowledge, and clearly state when an answer is not available in the document.
+
+__
 ## Our model vs the LLM
-<your answer to the discussion question>
+<your When would we use our small fine-tuned model instead of an LLM?
+
+- Speed: our model runs locally in a fraction of a second. The LLM needs a network call and is slower.
+- Cost:once trained, our model is free to run. The LLM uses a limited free allowance and then costs money.
+- Privacy: our model runs on our own machine, so the text never leaves it. With the LLM, the text is sent to an outside provider.
+- Internet access: our model works offline once downloaded. The LLM needs a stable internet connection.
+- Consistency: our model always returns one of two labels. The LLM can add extra words and break the expected format.
+We would use the LLM for open-ended tasks, such as answering questions about a document or extracting JSON from a complaint, or when we have no training data.
+answer to the discussion question>
 ## Limitations
 ____
 ## Who did what
