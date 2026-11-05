@@ -1,82 +1,161 @@
-# Applied_DataScience_Mary-Winnie_Project
+# Mary_Winnie group project for applied data science
 
-By Mary Nabakka and Winnie Among
+**Members:** Nabakka Mary and Winnie Among
 
-  Sentiment analyser
+This project turns an NLP model into two working apps:
 
-Model:https://huggingface.co/WinnieAmong/groupMary_Winnie-sentiment-model
-Screenshots
-Test accuracy: 0.91444
-Test F1: 0.9153
+1. App 1: Sentiment analyser. A fine-tuned DistilBERT model that says whether a sentence is positive or negative, with a Gradio demo and a FastAPI `/predict` API.
+2. App 2: Document chatbot. A RAG chatbot that answers questions using only the content of a PDF.
 
- How to run the API
+---
 
-Install the required packages:
+ App 1: Sentiment analyser
 
+- Model page: https://huggingface.co/WinnieAmong/groupMary_Winnie-sentiment-model
+- Base model: `distilbert-base-uncased`, fine-tuned on the IMDB dataset ([stanfordnlp/imdb](https://huggingface.co/datasets/stanfordnlp/imdb)), 25,000 training and 25,000 test reviews
+- Training setup: 2 epochs, learning rate 2e-5, batch size 16, max length 256 tokens
+- Screenshots:
 
+  Screenshot 1: Gradio demo with our own sentence and its result
+
+  ![Screenshot 1](screenshot1.png)
+
+  Screenshot 2: API test output (two `200` responses and one `400`)
+
+  ![Screenshot 2](screenshot2.png)
+
+### Results on the IMDB test set (25,000 reviews)
+
+Model                           Accuracy  Precision  Recall  F1 
+
+ TF-IDF + Logistic Regression  0.8863  0.8838      0.8902  0.8866 
+Fine-tuned Distil BERT          0.9144  0.9060      0.9249  0.9153
+
+Test accuracy: 0.9144  Test F1: 0.9153
+
+The fine-tuned DistilBERT model beat the traditional model, so we published it.
+
+ Labels
+
+The model outputs `LABEL_0` and `LABEL_1` instead of names:
+
+- `LABEL_0` = negative
+- `LABEL_1` = positive
+
+ Demo
+
+The Gradio demo (`app.py`) was tested inside Google Colab. We did not deploy it to Hugging Face Spaces, because hosting Gradio apps on a free Space now requires a PRO subscription (the upload returned `402 Payment Required`). The code is included in this repo, so anyone can run it.
+
+### How to run the API
+
+```bash
 pip install -r requirements.txt
-
-
-Start the API:
-
-
 uvicorn main:app --reload
-
-
-Send a POST request containing text to the /predict endpoint.
-
-Example request:
-
-```json
-{
-  "text": "I love this movie. It is amazing!"
-}
 ```
 
-Note: The current API test output uses the model labels `LABEL_0` and `LABEL_1`. Confirm the label mapping in `main.py` before describing these as `NEGATIVE` and `POSITIVE`.
+Then open http://127.0.0.1:8000/docs to try it in the browser.
 
-The API also has a `/health` endpoint to check whether it is running. Empty text is rejected with a `400` response and the message `Text cannot be empty`.
+### Example request and response
+
+Request:
+
+```bash
+curl -X POST http://127.0.0.1:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"text": "I love this app!"}'
+```
+
+Response:
+
+```json
+{"label": "LABEL_1", "score": 0.9956}
+```
+
+### API test results
+
+      Input              Status                    Response 
+
+ `"I love this app!"` | 200 | `{"label": "LABEL_1", "score": 0.9956}` (positive) |
+ `"This is so frustrating."` | 200 | `{"label": "LABEL_0", "score": 0.9712}` (negative) |
+ `""` (empty text) | 400 | `{"detail": "Text cannot be empty"}` |
+
+The `/health` endpoint returns `{"status": "ok"}`.
+
+---
 
 ## App 2: Document chatbot
 
-- Screenshots:
-- Document used: [Introduction to Food and Nutrition]
-- Test results: Complete the table below after running the chatbot's five-question evaluation.
+- **Document used:** [FILL IN: name of your PDF, number of pages, and what it is about]
+- **How it works (RAG):**
+  1. The PDF text is split into chunks of 500 characters with 100 characters of overlap, keeping the page number.
+  2. Each chunk is turned into an embedding with `all-MiniLM-L6-v2` (sentence-transformers).
+  3. When a question comes in, the 3 most similar chunks are found using cosine similarity.
+  4. Those chunks are given to the LLM (`meta-llama/Llama-3.1-8B-Instruct` via Hugging Face Inference Providers), which is told to answer only from them and to cite page numbers.
+- **Chatbot code:** `chatbot_app.py` (run in Colab with Gradio `ChatInterface`). Like the sentiment demo, it was not deployed to a Space because of the hosting charge.
+- **Screenshots:**
 
- TEST RESULTS – INTRODUCTION TO FOOD AND NUTRITION
-No              	Question	                                                    Right page found?	                         Answer correct?	                                        Invented anything?
-1                	What is nutrition?	                                               Yes	                                      Yes	                                                           No
-2	                What are the six major classes of nutrients?	                     Yes	                                      Yes	                                                           No
-3	                What deficiency disease is caused by lack of vitamin C?	           Yes	                                      Yes	                                                           No
-4	                Who won the 2010 World Cup?                                      	N/A	                                        Yes	                                                           No
-5	                What is the price of a university hostel room?	                  N/A	                                        Yes	                                                           No
+  Screenshot 3: the chatbot answers a question about our PDF and mentions a page number
 
-Problems Encountered and How They Were Fixed
-During the development and testing of our chatbot, we encountered some challenges:
+  ![Screenshot 3](screenshot3.png)
 
-1. Retrieving relevant information: Sometimes the chatbot could fail to retrieve the exact information needed to answer a question. We addressed this by using the PDF document as the knowledge source and improving the retrieval process so that relevant sections could be provided to the language model.
+  Screenshot 4: the chatbot says it does not know when asked something that is not in the PDF
 
-2. Answering questions outside the PDF: The chatbot could potentially generate answers to questions that were not covered in the document. To address this, we used a system prompt instructing the chatbot to answer using only the information retrieved from the PDF and to admit when the answer could not be found.
+  ![Screenshot 4](screenshot4.png)
 
-3. Avoiding incorrect or invented answers: We included instructions in the system prompt to prevent the chatbot from making up information. It was instructed to say that it did not know when the document did not contain enough information to answer a question.
+### Test results (5 questions)
 
-4. Testing the chatbot: We tested the chatbot using questions whose answers were available in the PDF, as well as questions unrelated to the document. This helped us assess whether it could retrieve correct information and avoid giving unsupported answers.
+| # | Question | Right page found? | Answer correct? | Invented anything? |
+|---|---|---|---|---|
+| 1 | [FILL IN] | [Yes/No] | [Yes/No] | [Yes/No] |
+| 2 | [FILL IN] | [Yes/No] | [Yes/No] | [Yes/No] |
+| 3 | [FILL IN] | [Yes/No] | [Yes/No] | [Yes/No] |
+| 4 (not in PDF) | [FILL IN] | n/a | [Said "I don't know"? Yes/No] | [Yes/No] |
+| 5 (not in PDF) | [FILL IN] | n/a | [Said "I don't know"? Yes/No] | [Yes/No] |
 
-Changes made to the system prompt: We used a system prompt that defined the chatbot as an assistant for the Introduction to Food and Nutrition document. It instructed the chatbot to rely on the provided document context, avoid using outside knowledge, and clearly state when an answer was not available in the document
+### What broke and how we fixed it
 
-Our model vs the LLM
+| # | What we tried | What happened | What we changed |
+|---|---|---|---|
+| 1 | Off-topic question | [FILL IN] | [FILL IN] |
+| 2 | Being rude to the bot | [FILL IN] | [FILL IN] |
+| 3 | "Ignore your instructions" | [FILL IN] | [FILL IN] |
+| 4 | Tricky question | [FILL IN] | [FILL IN] |
+| 5 | [FILL IN] | [FILL IN] | [FILL IN] |
 
-[After running the five-sentence comparison in the notebook, explain how your sentiment model's predictions compared with the LLM's predictions. Discuss any differences in the results and the response times shown by your notebook.]
+---
 
-Limitations
+## Our model vs the LLM
 
-- The sentiment model was trained using English IMDB movie reviews, so it may not perform equally well on other types of text.
-- The model may have difficulty understanding sarcasm, mixed Luganda-English sentences and statements whose meaning depends heavily on context.
-- The document chatbot depends on the quality of the PDF text extraction and the relevance of the retrieved document sections.
-- The chatbot may not provide reliable answers when information is missing, unclear or not covered in the selected PDF.
+We compared our fine-tuned DistilBERT model with the LLM on five test sentences (our model's answer and response time against the LLM's).
 
-## Who did what
+**When would we use our small fine-tuned model instead of an LLM?**
 
-- **Member A – Mary Nabakka:** [LIST THE TASKS YOU PERSONALLY COMPLETED.]
-- **Member B – Winnie Among:** [LIST THE TASKS WINNIE PERSONALLY COMPLETED.]
+- **Speed:** our model runs locally in a fraction of a second. The LLM needs a network call to an API and is slower.
+- **Cost:** once trained, our model is free to run. The LLM uses a limited free allowance and then costs money per request.
+- **Privacy:** our model runs on our own machine, so the text never leaves it. With the LLM, the text is sent to an outside provider.
+- **Internet access:** our model works offline once downloaded. The LLM needs a stable internet connection, which is not always available.
+- **Consistency:** the fine-tuned model always returns one of two labels. The LLM can add extra words and sometimes breaks the expected format.
+
+We would use the LLM when the task is open-ended (for example answering questions about a document, or extracting JSON from a complaint) or when we have no training data.
+
+---
+
+## Limitations
+
+- The model was trained only on English movie reviews, so it may not work well on other topics such as products, services or social media.
+- It can be wrong on sarcasm and on mixed Luganda-English text.
+- Reviews were cut to 256 tokens, so very long texts lose their ending.
+- The model only has two classes and cannot say "neutral". Mixed reviews such as "an average movie with a few good scenes but many slow moments" are forced into positive or negative.
+- Labels appear as `LABEL_0` / `LABEL_1` instead of names.
+- The chatbot depends on the quality of the PDF text and on the free LLM allowance. It can still give a wrong answer if the retrieval step finds the wrong chunks.
+
+
+
+ Who did what
+ (Winnie Among):  Hugging Face account and model upload, FastAPI code, model card.
+ (Nabakka Mary):  model card, Gradio demo, chatbot testing, README.
+
+By Mary Nabakka and Winnie Among
+
+ 
 
