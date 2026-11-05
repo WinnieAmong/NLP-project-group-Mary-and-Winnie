@@ -53,11 +53,18 @@ __
 - Consistency: our model always returns one of two labels. The LLM can add extra words and break the expected format.
 We would use the LLM for open-ended tasks, such as answering questions about a document or extracting JSON from a complaint, or when we have no training data.
 answer to the discussion question>
+
 ## Limitations
-____
+____- The model was trained only on English movie reviews, so it may not work well on other topics such as products, services or social media.
+- It can be wrong on sarcasm and on mixed Luganda-English text.
+- Reviews were cut to 256 tokens, so very long texts lose their ending.
+- The model only has two classes, so it cannot say "neutral". Mixed reviews are forced into positive or negative.
+- Labels appear as LABEL_0 / LABEL_1 instead of names.
+- The chatbot depends on the quality of the PDF text and on the free LLM allowance. It can still give a wrong answer if the retrieval step finds the wrong chunks.
+
 ## Who did what
-- Member A: ____
-- Member B: ____
+- Member A: __ Winnie Among _  Hugging Face account and token, model upload, FastAPI API._
+- Member B: _Nabakka Mary _ model card, Gradio demo, chatbot testing, README._
 
 By Mary Nabakka and Winnie Among
 
