@@ -12,11 +12,29 @@ uvicorn main:app --reload
 - Example: send {"text": "I love this"} to /predict
 -> {"label": "POSITIVE", "score": 0.99}
 ## App 2: Document chatbot
+
+- Document used: Introduction to Food and Nutrition (PDF)
+- Chatbot code:chatbot_app.py (run in Colab with Gradio ChatInterface). It was not deployed to a Space because of the hosting charge.
+- How it works (RAG):
+  1. The PDF text is split into chunks of 500 characters with 100 characters of overlap, keeping the page number.
+  2. Each chunk is turned into an embedding with all-MiniLM-L6-v2.
+  3. For each question, the 3 most similar chunks are found using cosine similarity.
+  4. These chunks are given to the LLM (meta-llama/Llama-3.1-8B-Instruct), which is told to answer only from them and to cite page numbers.
+
 - Screenshots: <img width="1600" height="321" alt="Screenshot 3" src="https://github.com/user-attachments/assets/ae71cd77-aa45-4fe3-883b-bb65da207739" />
 , <img width="1600" height="500" alt="screenshot 4" src="https://github.com/user-attachments/assets/242d5a0b-30b4-4511-b0fa-58a0bebfda03" />
 
 - Document used: ____
 - Test results: <paste your 5-question table>
+- 
+No         Question                                                    Right page found?        Answer correct?                                Invented anything?
+  
+ 1         What is nutrition?                                                  Yes                    Yes                                                No 
+ 2         What are the six major classes of nutrients?                        Yes                    Yes                                                No 
+ 3         What deficiency disease is caused by lack of vitamin C?             Yes                    Yes                                                No 
+ 4         Who won the 2010 World Cup?                                         N/A                    Yes (said it was not in the document)              No 
+ 5         What is the price of a university hostel room?                      N/A                    Yes (said it was not in the document)              No 
+
 - What broke and how we fixed it: ____
 ## Our model vs the LLM
 <your answer to the discussion question>
