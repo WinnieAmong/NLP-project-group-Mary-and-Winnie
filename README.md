@@ -1,7 +1,7 @@
 # Group NLP Project
 Members: _Nabakka Mary___ and _Winnie Among___
 ## App 1: Sentiment analyser
-- Model: < https://huggingface.co/WinnieAmong/groupMary_Winnie-sentiment-model>
+- Model:https://huggingface.co/WinnieAmong/groupMary_Winnie-sentiment-model
 - Screenshots: <img <img width="1745" height="705" alt="Screenshot  1" src="https://github.com/user-attachments/assets/5a70d496-8e7a-4dc6-875c-c3759fb13fd5" />
 />
 , <img width="763" height="516" alt="screenshort 2" src="https://github.com/user-attachments/assets/54abb5a4-8e0b-4a24-9485-30ac55ec666d" />
