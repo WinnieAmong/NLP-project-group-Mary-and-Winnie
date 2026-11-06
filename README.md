@@ -64,9 +64,8 @@ ____- The model was trained only on English movie reviews, so it may not work we
 
 ## Who did what
 - Member A: __ Winnie Among _  Hugging Face account and token, model upload, FastAPI API._
-- Member B: _Nabakka Mary   _ model card, Gradio demo, chatbot testing, Readme._
+- Member B: _Nabakka Mary _  Model card, Gradio demo, Chatbot testing, Readme.   
 
 By Mary Nabakka and Winnie Among
 
- 
 
