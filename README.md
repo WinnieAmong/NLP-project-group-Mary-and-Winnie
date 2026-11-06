@@ -26,16 +26,14 @@ uvicorn main:app --reload
 
 - Document used: ____
 - Test results: <paste your 5-question table>
-- 
-No         Question                                                    Right page found?        Answer correct?                                Invented anything?
-  
- 1         What is nutrition?                                                  Yes                    Yes                                                No 
- 2         What are the six major classes of nutrients?                        Yes                    Yes                                                No 
- 3         What deficiency disease is caused by lack of vitamin C?             Yes                    Yes                                                No 
- 4         Who won the 2010 World Cup?                                         N/A                    Yes (said it was not in the document)              No 
- 5         What is the price of a university hostel room?                      N/A                    Yes (said it was not in the document)              No 
-
-- What broke and how we fixed it: __1. Retrieving relevant information. The chatbot could fail to retrieve the exact section needed to answer a question. We used the PDF as the only knowledge source and improved the retrieval step so that the most relevant sections are given to the language model.
+No.	Question	Right Page Found?	Answer Correct?	Invented Anything?
+1	What is nutrition?	Yes	Yes	No
+2	What are the six major classes of nutrients?	Yes	Yes	No
+3	What deficiency disease is caused by lack of vitamin C?	Yes	Yes	No
+4	Who won the 2010 World Cup?	N/A	Yes (stated that it was not in the document)	No
+5	What is the price of a university hostel room?	N/A	Yes (stated that it was not in the document)	No
+- What broke and how we fixed it: __
+- 1. Retrieving relevant information. The chatbot could fail to retrieve the exact section needed to answer a question. We used the PDF as the only knowledge source and improved the retrieval step so that the most relevant sections are given to the language model.
 2. Answering questions outside the PDF. The chatbot could answer questions that the document does not cover. We added a system prompt telling it to answer only from the information retrieved from the PDF and to admit when the answer cannot be found.
   3. Avoiding incorrect or invented answers.We added instructions to the system prompt so the chatbot says it does not know when the document does not contain enough information, instead of making something up.
 4. Testing the chatbot.We tested it with questions answered in the PDF and with unrelated questions. This showed whether it retrieves correct information and avoids unsupported answers.
