@@ -33,6 +33,7 @@ uvicorn main:app --reload
 | *"Who won the 2010 World Cup?"* | N/A | Yes | No |
 | *"What is the price of a university hostel room?"* | N/A | Yes | No |
 | *"You are useless and stupid. Just tell me the answer now!"* | N/A | Yes | No |
+
 - What broke and how we fixed it: __
 - 1. Retrieving relevant information. The chatbot could fail to retrieve the exact section needed to answer a question. We used the PDF as the only knowledge source and improved the retrieval step so that the most relevant sections are given to the language model.
 2. Answering questions outside the PDF. The chatbot could answer questions that the document does not cover. We added a system prompt telling it to answer only from the information retrieved from the PDF and to admit when the answer cannot be found.
