@@ -43,7 +43,7 @@ uvicorn main:app --reload
 Changes made to the system prompt:the prompt defines the chatbot as an assistant for the *Introduction to Food and Nutrition* document. It tells the chatbot to rely on the provided document context, avoid outside knowledge, and clearly state when an answer is not available in the document.
 
 __
-## Our model vs the LLM
+## Our model vs the LLM.
 <your When would we use our small fine-tuned model instead of an LLM?
 
 - Speed: our model runs locally in a fraction of a second. The LLM needs a network call and is slower.
